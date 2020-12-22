@@ -1,0 +1,30 @@
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+    # for example our docker UI server ip 192.168.1.20 if you dont have 
+    # credentials you can use '*' for accept all requests
+    Access-Control-Allow-Origin: ['http://192.168.1.20:50502']
+    Access-Control-Allow-Methods: ['HEAD', 'GET', 'OPTIONS', 'DELETE']
+    Access-Control-Allow-Headers: ['Authorization', 'Accept']
+    Access-Control-Max-Age: [1728000]
+    Access-Control-Allow-Credentials: [true]
+    Access-Control-Expose-Headers: ['Docker-Content-Digest']
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /etc/docker/registry/htpasswd
