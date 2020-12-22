@@ -1,0 +1,31 @@
+version: "2"
+
+networks:
+  docker_infrastructure:
+
+services:
+  registry:
+    restart: always
+    image: registry:2.7
+    ports:
+      - 50501:5000
+    volumes:
+      - ./registry-data:/var/lib/registry
+      - ./registry-config/config.yml:/etc/docker/registry/config.yml
+      - ./registry-config/htpasswd:/etc/docker/registry/htpasswd
+    networks:
+      - wize_infrastructure
+
+  registry-ui:
+    image: joxit/docker-registry-ui:static
+    ports:
+      - 50502:80
+    environment:
+      - URL=http://192.168.1.20:50501
+      - REGISTRY_TITLE=My Private Docker Registry
+      - REGISTRY_URL=http://registry:50501
+      - DELETE_IMAGES=False
+    depends_on:
+      - registry
+    networks:
+      - docker_infrastructure
